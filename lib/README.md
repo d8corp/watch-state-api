@@ -104,6 +104,70 @@ const user = new Api('https://reqres.in/api/users?page={page}', {
     page: 1
   }
 })
+
+await user.get()
+// request to https://reqres.in/api/users?page=1
+```
+
+Or you can provide additional fields for `get` method to add query search params
+
+```javascript
+const user = new Api('https://reqres.in/api/users', {
+  data: {
+    page: 1
+  }
+})
+
+await user.get()
+// request to https://reqres.in/api/users?page=1
+```
+
+### TypeScript
+
+Api has 3 generics, the first one is a data type the request will return
+```typescript
+interface Responce {
+  page: number
+  per_page: number
+  // ...
+}
+
+const user = new Api<Responce>('https://reqres.in/api/users')
+
+console.log(user.get().value?.page)
+```
+
+The second generic is an error type you can get
+```typescript
+interface ResponceError {
+  code: number
+  message: string
+}
+
+const user = new Api<any, ResponceError>('https://reqres.in/api/users')
+
+console.log(user.get().error?.message)
+```
+
+The last generic is a data you can provide to the `get` method
+
+```typescript
+interface Data {
+  page: number
+}
+
+const user = new Api<any, any, Data>('https://reqres.in/api/users')
+
+await user.get({ page: 1 })
+```
+
+When you don't need a data for the api, it's better to use [Fetch](https://www.npmjs.com/package/@watch-state/fetch)
+instead of, but you can use `void` type to prevent any query options.
+
+```typescript
+const user = new Api<any, any, void>('https://reqres.in/api/users')
+
+await user.get()
 ```
 
 ## Issues

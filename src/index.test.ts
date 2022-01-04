@@ -42,6 +42,17 @@ describe('Api', () => {
 
     expect(user.get({user: 2}).value.data.id).toBe(2)
   })
+  test('test2', async () => {
+    const user = new Api('https://reqres.in/api/users', {
+      data: {
+        page: 2
+      }
+    })
+
+    await user.get()
+
+    expect(user.get().value.page).toBe(2)
+  })
   test('apiReplace', async () => {
     expect(apiReplace('/user?id={user}', { user: 1 })).toBe('/user?id=1')
     expect(apiReplace('/user?id={user}', {})).toBe('/user?id=')
