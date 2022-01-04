@@ -2,6 +2,9 @@
 
 ## v1.1
 
+### v1.1.1 [![04.01.2022](https://img.shields.io/date/1641304255)](https://github.com/d8corp/watch-state-ajax/tree/v1.1.1)
+- improved types
+
 ### v1.1.0 [![04.01.2022](https://img.shields.io/date/1641299580)](https://github.com/d8corp/watch-state-ajax/tree/v1.1.0)
 - improved types
 - add data using to get query search params

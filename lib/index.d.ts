@@ -1,15 +1,12 @@
 import Fetch, { FetchOptions } from '@watch-state/fetch';
-export declare type Data = Record<string, string | number | boolean>;
-export declare type AvailableData = Data | void;
-export interface ApiOptions<V = any, E = any> extends FetchOptions<V, E> {
-    data?: Data;
+export interface ApiOptions<V = any, E = any, D = any> extends FetchOptions<V, E> {
+    data?: D;
 }
 export declare const dataReg: RegExp;
-export declare function apiReplace(url: string, values: Data): string;
-export default class Api<V = any, E = any, D extends AvailableData = AvailableData> {
+export default class Api<V = any, E = any, D = any> {
     url: string;
-    options: ApiOptions<V, E>;
+    options: ApiOptions<V, E, D>;
     cache: Record<string, Fetch<V, E>>;
-    constructor(url: string, options?: ApiOptions<V, E>);
+    constructor(url: string, options?: ApiOptions<V, E, D>);
     get(data?: D): Fetch<V, E>;
 }
