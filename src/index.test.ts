@@ -1,10 +1,10 @@
-import Api, { apiReplace } from '.'
+import Api from '.'
 import 'isomorphic-fetch'
 
 describe('Api', () => {
   test('Api', async () => {
     const user = new Api('https://reqres.in/api/users/1')
-    user.get().resolve({data: {id: 2}})
+    user.get({}).resolve({data: {id: 2}})
     await user
     expect(user.get().value.data.id).toBe(2)
 
@@ -52,9 +52,5 @@ describe('Api', () => {
     await user.get()
 
     expect(user.get().value.page).toBe(2)
-  })
-  test('apiReplace', async () => {
-    expect(apiReplace('/user?id={user}', { user: 1 })).toBe('/user?id=1')
-    expect(apiReplace('/user?id={user}', {})).toBe('/user?id=')
   })
 })
