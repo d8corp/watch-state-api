@@ -89,37 +89,82 @@ const user = new Api('https://reqres.in/api/user/{id}', {
   }
 })
 
-(await user.get()).data.id
+;(await user.get()).data.id
 // 1
 
-(await user.get({id: 2})).data.id
+;(await user.get({id: 2})).data.id
 // 2
 ```
 
 You can override search params as well
 
 ```javascript
-const user = new Api('https://reqres.in/api/users?page={page}', {
+const users = new Api('https://reqres.in/api/users?page={page}', {
   data: {
     page: 1
   }
 })
 
-await user.get()
+await users.get()
 // request to https://reqres.in/api/users?page=1
 ```
 
 Or you can provide additional fields for `get` method to add query search params
 
 ```javascript
-const user = new Api('https://reqres.in/api/users', {
+const users = new Api('https://reqres.in/api/users', {
   data: {
     page: 1
   }
 })
 
-await user.get()
+await users.get()
 // request to https://reqres.in/api/users?page=1
+```
+
+### Cache invalidation
+
+You can update all [Fetch](https://www.npmjs.com/package/@watch-state/fetch) instances of an `Api` with `update` method
+
+```typescript jsx
+import { Watch } from 'watch-state'
+import { Api } from ' @watch-state/api'
+
+const users = new Api('https://reqres.in/api/users?page={page}', {
+  data: {
+    page: 1
+  }
+})
+
+new Watch(() => {
+  console.log(users.get().value)
+})
+
+await users.get()
+
+users.update()
+```
+
+You can update by object keys
+
+```typescript jsx
+import { Watch } from 'watch-state'
+import { Api } from ' @watch-state/api'
+
+const users = new Api('https://reqres.in/api/users', {
+  getKeys: value => value.data.map(({id}) => id),
+})
+
+new Watch(() => {
+  console.log(users.get().value)
+})
+
+await users.get()
+
+users.update([10])
+// nothing happens becase the first page do not contain the user with id equas 10
+
+users.update([1])
 ```
 
 ### TypeScript
@@ -132,9 +177,9 @@ interface Responce {
   // ...
 }
 
-const user = new Api<Responce>('https://reqres.in/api/users')
+const users = new Api<Responce>('https://reqres.in/api/users')
 
-console.log(user.get().value?.page)
+console.log(users.get().value?.page)
 ```
 
 The second generic is an error type you can get
@@ -144,9 +189,9 @@ interface ResponceError {
   message: string
 }
 
-const user = new Api<any, ResponceError>('https://reqres.in/api/users')
+const users = new Api<any, ResponceError>('https://reqres.in/api/users')
 
-console.log(user.get().error?.message)
+console.log(users.get().error?.message)
 ```
 
 The last generic is a data you can provide to the `get` method
@@ -156,9 +201,9 @@ interface Data {
   page: number
 }
 
-const user = new Api<any, any, Data>('https://reqres.in/api/users')
+const users = new Api<any, any, Data>('https://reqres.in/api/users')
 
-await user.get({ page: 1 })
+await users.get({ page: 1 })
 ```
 
 When you don't need a data for the api, it's better to use [Fetch](https://www.npmjs.com/package/@watch-state/fetch)

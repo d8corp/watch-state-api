@@ -1,16 +1,23 @@
 # Changelog
 
+## v1.2
+
+### v1.2.0 [![06.09.2022](https://img.shields.io/date/1662461918)](https://github.com/d8corp/watch-state-ajax/tree/v1.2.0)
+- added cache invalidation
+  - added `update` method
+  - added `getKeys` option
+
 ## v1.1
 
 ### v1.1.3 [![07.01.2022](https://img.shields.io/date/1641559647)](https://github.com/d8corp/watch-state-ajax/tree/v1.1.3)
-- update dependencies
+- updated dependencies
 
 ### v1.1.1 [![04.01.2022](https://img.shields.io/date/1641304255)](https://github.com/d8corp/watch-state-ajax/tree/v1.1.1)
 - improved types
 
 ### v1.1.0 [![04.01.2022](https://img.shields.io/date/1641299580)](https://github.com/d8corp/watch-state-ajax/tree/v1.1.0)
 - improved types
-- add data using to get query search params
+- added data using to get query search params
 
 ## v1.0
 

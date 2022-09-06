@@ -1,14 +1,23 @@
 import Fetch, { FetchOptions } from '@watch-state/fetch'
 
-export interface ApiOptions<V = any, E = any, D = any> extends FetchOptions<V, E> {
+export interface ApiOptions<V = any, E = any, D = any, K extends string | number = string | number> extends FetchOptions<V, E> {
   data?: D
+  getKeys?: (value: V) => K[]
 }
 
 export const dataReg = /\{(\w+)\}/g
 
-export default class Api<V = any, E = any, D = any> {
+export default class Api<V = any, E = any, D = any, K extends string | number = string | number> {
   cache: Record<string, Fetch<V, E>> = Object.create(null)
-  constructor (public url: string, public options: ApiOptions<V, E, D> = {}) {}
+  keyCache: Record<K, Set<Fetch<V, E>>>
+  keyCacheMap: Record<string, K[]>
+
+  constructor (public url: string, public options: ApiOptions<V, E, D, K> = {}) {
+    if (options.getKeys) {
+      this.keyCache = Object.create(null)
+      this.keyCacheMap = Object.create(null)
+    }
+  }
 
   get (data?: D): Fetch<V, E> {
     const values = { ...this.options.data, ...data }
@@ -45,6 +54,57 @@ export default class Api<V = any, E = any, D = any> {
       return this.cache[url]
     }
 
-    return this.cache[url] = new Fetch(url, this.options)
+    const request = new Fetch<V, E>(url, this.options)
+    this.cache[url] = request
+
+    const { getKeys } = this.options
+
+    if (getKeys) {
+      request.on('resolve', () => {
+        this.keyCacheMap[url]?.forEach(key => {
+          this.keyCache[key].delete(request)
+        })
+
+        const map = this.keyCacheMap[url] = []
+
+        const data = request.value
+        const keys = getKeys(data)
+
+        for (const key of keys) {
+          map.push(key)
+
+          if (!this.keyCache[key]) {
+            this.keyCache[key] = new Set([request])
+          } else {
+            this.keyCache[key].add(request)
+          }
+        }
+      })
+    }
+
+    return request
+  }
+
+  update (keys?: K[], timeout?: number) {
+    if (!keys) {
+      for (const key in this.cache) {
+        this.cache[key].update(timeout)
+      }
+      return
+    }
+
+    if (!this.keyCache) {
+      return
+    }
+
+    for (const key of keys) {
+      const cache = this.keyCache[key]
+
+      if (cache) {
+        for (const request of cache) {
+          request.update(timeout)
+        }
+      }
+    }
   }
 }

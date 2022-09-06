@@ -1,5 +1,7 @@
-import Api from '.'
 import 'isomorphic-fetch'
+import { Watch } from 'watch-state'
+
+import Api from '.'
 
 describe('Api', () => {
   test('Api', async () => {
@@ -52,5 +54,67 @@ describe('Api', () => {
     await user.get()
 
     expect(user.get().value.page).toBe(2)
+  })
+  it('should update all requests', async () => {
+    const users = new Api('https://reqres.in/api/users')
+    const page1 = users.get()
+    const page2 = users.get({ page: 2 })
+    const watch = jest.fn()
+
+    new Watch(() => {
+      watch('page 1', page1.loading)
+    })
+
+    new Watch(() => {
+      watch('page 2', page2.loading)
+    })
+
+    await Promise.all([ page1, page2 ])
+
+    expect(watch).toBeCalledTimes(4)
+
+    users.update()
+
+    expect(watch).toBeCalledTimes(6)
+
+    await Promise.all([ page1, page2 ])
+
+    expect(watch).toBeCalledTimes(8)
+  })
+  it('should update by key', async () => {
+    const users = new Api('https://reqres.in/api/users', {
+      getKeys: value => value.data.map(({id}) => id)
+    })
+    const page1 = users.get()
+    const page2 = users.get({ page: 2 })
+    const watch = jest.fn()
+
+    new Watch(() => {
+      watch('page 1', page1.loading)
+    })
+
+    new Watch(() => {
+      watch('page 2', page2.loading)
+    })
+
+    await Promise.all([ page1, page2 ])
+
+    expect(watch).toBeCalledTimes(4)
+
+    users.update([1])
+
+    expect(watch).toBeCalledTimes(5)
+
+    await Promise.all([ page1, page2 ])
+
+    expect(watch).toBeCalledTimes(6)
+
+    users.update([1, 7])
+
+    expect(watch).toBeCalledTimes(8)
+
+    await Promise.all([ page1, page2 ])
+
+    expect(watch).toBeCalledTimes(10)
   })
 })
