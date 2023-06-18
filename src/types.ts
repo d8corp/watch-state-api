@@ -5,7 +5,7 @@ export type GetRequiredDataKeys <URL extends string> = URL extends `${infer Befo
   : never
 
 export type DataKeys = string | number | symbol
-export type RequiredDataValues = string | number | boolean | null
+export type RequiredDataValues = string | number | boolean | null | undefined
 export type OptionalDataValues = RequiredDataValues | RequiredDataValues[]
 export type ApiData = Record<DataKeys, OptionalDataValues>
 
