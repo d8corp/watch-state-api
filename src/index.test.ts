@@ -1,7 +1,7 @@
 import 'isomorphic-fetch'
 import './BroadcastChannel'
 
-import Api from './Api'
+import Api, { FetchApi } from './Api'
 import { type ApiData } from './types'
 
 interface User { data: { id: string } }
@@ -25,6 +25,18 @@ describe('Api', () => {
 
     try {
       await user1
+    } catch (e) {
+      fn(e)
+    }
+
+    expect(fn).toBeCalled()
+  })
+  test('error FetchApi', async () => {
+    const fn = jest.fn()
+    const user = new FetchApi<User>('https://reqres.in/api/users/123')
+
+    try {
+      await user
     } catch (e) {
       fn(e)
     }
