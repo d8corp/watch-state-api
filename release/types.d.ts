@@ -4,7 +4,7 @@ export type DataKeys = string | number | symbol;
 export type RequiredDataValues = string | number | boolean | null | undefined;
 export type OptionalDataValues = RequiredDataValues | RequiredDataValues[];
 export type ApiData = Record<DataKeys, OptionalDataValues>;
-export interface ApiOptions<Value = unknown, Data extends ApiData = ApiData> extends FetchOptions<Value> {
+export interface ApiOptions<Value = unknown, Err = Error, Data extends ApiData = ApiData> extends FetchOptions<Value, Err> {
     data?: Data;
     getKeys?: (value: Value) => DataKeys[];
 }

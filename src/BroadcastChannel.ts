@@ -1,5 +1,5 @@
 global.BroadcastChannel = global.BroadcastChannel || function () {
-  this.onmessage = () => {}
+  this.addEventListener = () => {}
   this.postMessage = () => {}
   this.close = () => {}
 } as any

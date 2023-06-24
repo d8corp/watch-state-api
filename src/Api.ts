@@ -14,17 +14,25 @@ export class FetchApi <
   Data extends ApiData = ApiData
 > extends Fetch<Value, Err> {
   #resolveBC: BroadcastChannel
-  constructor (public url: string, public options?: ApiOptions<Value, Data>) {
+  #bcResolve = false
+  constructor (public url: string, public options: ApiOptions<Value, Err, Data> = {}) {
     super(url, options)
-    this.#resolveBC = new BroadcastChannel(`@watch-state/api:resolveBC:${url}`)
-    this.#resolveBC.onmessage(((event) => {
-      this.resolve(event.data)
-    }) as any)
+    const bc = new BroadcastChannel(`@watch-state/api:resolveBC:${url}`)
+    this.#resolveBC = bc
+    bc.addEventListener('message', (event) => {
+      this.#bcResolve = true
+      this.fetchResolve(event.data)
+    })
   }
 
-  protected resolve (value: Value) {
-    super.resolve(value)
-    this.#resolveBC.postMessage(value)
+  protected fetchResolve (value: Value) {
+    super.fetchResolve(value)
+
+    if (this.#bcResolve) {
+      this.#bcResolve = false
+    } else {
+      this.#resolveBC.postMessage(value)
+    }
   }
 
   destroy () {
@@ -54,8 +62,7 @@ class ApiFetch <Value, Err, Data extends ApiData> extends FetchApi<Value, Err, D
 
       const map = keyCacheMap[url] = []
 
-      const data = this.value
-      const keys = getKeys(data)
+      const keys = getKeys(value)
 
       for (const key of keys) {
         map.push(key)
@@ -81,7 +88,7 @@ export default class Api<
   keyCache: Record<DataKeys, Set<ApiFetch<Value, Err, Data>>>
   keyCacheMap: Record<string, DataKeys[]>
 
-  constructor (public url: string, public options: ApiOptions<Value, Data> = {}) {
+  constructor (public url: string, public options: ApiOptions<Value, Err, Data> = {}) {
     if (options?.getKeys) {
       this.keyCache = Object.create(null)
       this.keyCacheMap = Object.create(null)
@@ -130,7 +137,7 @@ export default class Api<
     return request
   }
 
-  update (keys?: string[], timeout?: number) {
+  update (keys?: (string | number)[], timeout?: number) {
     if (!keys) {
       for (const key in this.cache) {
         this.cache[key].update(timeout)

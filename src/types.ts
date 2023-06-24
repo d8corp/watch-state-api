@@ -11,8 +11,9 @@ export type ApiData = Record<DataKeys, OptionalDataValues>
 
 export interface ApiOptions<
   Value = unknown,
+  Err = Error,
   Data extends ApiData = ApiData,
-> extends FetchOptions<Value> {
+> extends FetchOptions<Value, Err> {
   data?: Data
   getKeys?: (value: Value) => DataKeys[]
 }

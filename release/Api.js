@@ -9,28 +9,36 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 
 var Fetch__default = /*#__PURE__*/_interopDefaultLegacy(Fetch);
 
-var _FetchApi_resolveBC;
+var _FetchApi_resolveBC, _FetchApi_bcResolve;
 const dataReg = /\{(\w+)\}/g;
 class FetchApi extends Fetch__default["default"] {
-    constructor(url, options) {
+    constructor(url, options = {}) {
         super(url, options);
         this.url = url;
         this.options = options;
         _FetchApi_resolveBC.set(this, void 0);
-        tslib.__classPrivateFieldSet(this, _FetchApi_resolveBC, new BroadcastChannel(`@watch-state/api:resolveBC:${url}`), "f");
-        tslib.__classPrivateFieldGet(this, _FetchApi_resolveBC, "f").onmessage(((event) => {
-            this.resolve(event.data);
-        }));
+        _FetchApi_bcResolve.set(this, false);
+        const bc = new BroadcastChannel(`@watch-state/api:resolveBC:${url}`);
+        tslib.__classPrivateFieldSet(this, _FetchApi_resolveBC, bc, "f");
+        bc.addEventListener('message', (event) => {
+            tslib.__classPrivateFieldSet(this, _FetchApi_bcResolve, true, "f");
+            this.fetchResolve(event.data);
+        });
     }
-    resolve(value) {
-        super.resolve(value);
-        tslib.__classPrivateFieldGet(this, _FetchApi_resolveBC, "f").postMessage(value);
+    fetchResolve(value) {
+        super.fetchResolve(value);
+        if (tslib.__classPrivateFieldGet(this, _FetchApi_bcResolve, "f")) {
+            tslib.__classPrivateFieldSet(this, _FetchApi_bcResolve, false, "f");
+        }
+        else {
+            tslib.__classPrivateFieldGet(this, _FetchApi_resolveBC, "f").postMessage(value);
+        }
     }
     destroy() {
         tslib.__classPrivateFieldGet(this, _FetchApi_resolveBC, "f").close();
     }
 }
-_FetchApi_resolveBC = new WeakMap();
+_FetchApi_resolveBC = new WeakMap(), _FetchApi_bcResolve = new WeakMap();
 class ApiFetch extends FetchApi {
     constructor(url, api) {
         super(url, api.options);
@@ -45,8 +53,7 @@ class ApiFetch extends FetchApi {
                 keyCache[key].delete(this);
             });
             const map = keyCacheMap[url] = [];
-            const data = this.value;
-            const keys = getKeys(data);
+            const keys = getKeys(value);
             for (const key of keys) {
                 map.push(key);
                 if (!keyCache[key]) {
