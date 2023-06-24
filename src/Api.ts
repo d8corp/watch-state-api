@@ -14,25 +14,18 @@ export class FetchApi <
   Data extends ApiData = ApiData
 > extends Fetch<Value, Err> {
   #resolveBC: BroadcastChannel
-  #bcResolve = false
   constructor (public url: string, public options: ApiOptions<Value, Err, Data> = {}) {
     super(url, options)
     const bc = new BroadcastChannel(`@watch-state/api:resolveBC:${url}`)
     this.#resolveBC = bc
     bc.addEventListener('message', (event) => {
-      this.#bcResolve = true
-      this.fetchResolve(event.data)
+      super.resolve(event.data)
     })
   }
 
-  protected fetchResolve (value: Value) {
-    super.fetchResolve(value)
-
-    if (this.#bcResolve) {
-      this.#bcResolve = false
-    } else {
-      this.#resolveBC.postMessage(value)
-    }
+  protected resolve (value: Value) {
+    super.resolve(value)
+    this.#resolveBC.postMessage(value)
   }
 
   destroy () {

@@ -1,7 +1,7 @@
 import { __classPrivateFieldSet, __classPrivateFieldGet } from 'tslib';
 import Fetch from '@watch-state/fetch';
 
-var _FetchApi_resolveBC, _FetchApi_bcResolve;
+var _FetchApi_resolveBC;
 const dataReg = /\{(\w+)\}/g;
 class FetchApi extends Fetch {
     constructor(url, options = {}) {
@@ -9,28 +9,21 @@ class FetchApi extends Fetch {
         this.url = url;
         this.options = options;
         _FetchApi_resolveBC.set(this, void 0);
-        _FetchApi_bcResolve.set(this, false);
         const bc = new BroadcastChannel(`@watch-state/api:resolveBC:${url}`);
         __classPrivateFieldSet(this, _FetchApi_resolveBC, bc, "f");
         bc.addEventListener('message', (event) => {
-            __classPrivateFieldSet(this, _FetchApi_bcResolve, true, "f");
-            this.fetchResolve(event.data);
+            super.resolve(event.data);
         });
     }
-    fetchResolve(value) {
-        super.fetchResolve(value);
-        if (__classPrivateFieldGet(this, _FetchApi_bcResolve, "f")) {
-            __classPrivateFieldSet(this, _FetchApi_bcResolve, false, "f");
-        }
-        else {
-            __classPrivateFieldGet(this, _FetchApi_resolveBC, "f").postMessage(value);
-        }
+    resolve(value) {
+        super.resolve(value);
+        __classPrivateFieldGet(this, _FetchApi_resolveBC, "f").postMessage(value);
     }
     destroy() {
         __classPrivateFieldGet(this, _FetchApi_resolveBC, "f").close();
     }
 }
-_FetchApi_resolveBC = new WeakMap(), _FetchApi_bcResolve = new WeakMap();
+_FetchApi_resolveBC = new WeakMap();
 class ApiFetch extends FetchApi {
     constructor(url, api) {
         super(url, api.options);

@@ -17,4 +17,18 @@ describe('Api', () => {
 
     expect(user1.value.data.id).toBe(1)
   })
+  test('error', async () => {
+    const fn = jest.fn()
+    const user = new Api<User, unknown, UserData>('https://reqres.in/api/users/{user}')
+
+    const user1 = user.get({ user: 123 })
+
+    try {
+      await user1
+    } catch (e) {
+      fn(e)
+    }
+
+    expect(fn).toBeCalled()
+  })
 })

@@ -1,6 +1,6 @@
 {
   "name": "@watch-state/api",
-  "version": "2.0.0-alpha.6",
+  "version": "2.0.0-alpha.7",
   "description": "Api for watch-state",
   "main": "index.js",
   "module": "index.es6.js",
@@ -61,7 +61,7 @@
     "watch-state": "^3.5.0-alpha.2"
   },
   "dependencies": {
-    "@watch-state/fetch": "^2.0.0-alpha.2",
+    "@watch-state/fetch": "^2.0.0-alpha.3",
     "tslib": "^2.5.3"
   }
 }

@@ -6,7 +6,7 @@ export declare class FetchApi<Value = unknown, Err = Error, Data extends ApiData
     url: string;
     options: ApiOptions<Value, Err, Data>;
     constructor(url: string, options?: ApiOptions<Value, Err, Data>);
-    protected fetchResolve(value: Value): void;
+    protected resolve(value: Value): void;
     destroy(): void;
 }
 declare class ApiFetch<Value, Err, Data extends ApiData> extends FetchApi<Value, Err, Data> {
