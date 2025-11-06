@@ -9,7 +9,7 @@ class FetchApi extends Fetch {
         this.url = url;
         this.options = options;
         _FetchApi_resolveBC.set(this, void 0);
-        if (typeof BroadcastChannel !== 'undefined') {
+        if (!options.static && typeof BroadcastChannel !== 'undefined') {
             const bc = new BroadcastChannel(`@watch-state/api:resolveBC:${url}`);
             __classPrivateFieldSet(this, _FetchApi_resolveBC, bc, "f");
             bc.addEventListener('message', (event) => {

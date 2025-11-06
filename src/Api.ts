@@ -17,7 +17,7 @@ export class FetchApi <
   constructor (public url: string, public options: ApiOptions<Value, Err, Data> = {}) {
     super(url, options)
 
-    if (typeof BroadcastChannel !== 'undefined') {
+    if (!options.static && typeof BroadcastChannel !== 'undefined') {
       const bc = new BroadcastChannel(`@watch-state/api:resolveBC:${url}`)
       this.#resolveBC = bc
       bc.addEventListener('message', (event) => {

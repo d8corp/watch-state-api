@@ -16,4 +16,6 @@ export interface ApiOptions<
 > extends FetchOptions<Value, Err> {
   data?: Data
   getKeys?: (value: Value) => DataKeys[]
+  /** Turn off broadcast */
+  static?: boolean
 }

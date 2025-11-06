@@ -2,6 +2,9 @@
 
 ## v2.0
 
+### v2.0.1 [![06.11.2025](https://img.shields.io/date/1762462238)](https://github.com/d8corp/watch-state-ajax/tree/v2.0.1)
+  - added `static` option
+
 ### v2.0.0 [![06.11.2025](https://img.shields.io/date/1762457013)](https://github.com/d8corp/watch-state-ajax/tree/v2.0.0)
   - new version
 
