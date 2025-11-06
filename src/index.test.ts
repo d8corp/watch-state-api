@@ -1,5 +1,4 @@
 import 'isomorphic-fetch'
-import './BroadcastChannel'
 
 import Api, { FetchApi } from './Api'
 import { type ApiData } from './types'
@@ -9,7 +8,11 @@ interface UserData extends ApiData { user: number }
 
 describe('Api', () => {
   test('test', async () => {
-    const user = new Api<User, unknown, UserData>('https://reqres.in/api/users/{user}')
+    const user = new Api<User, unknown, UserData>('https://reqres.in/api/users/{user}', {
+      headers: {
+        'x-api-key': 'reqres-free-v1',
+      },
+    })
 
     const user1 = user.get({ user: 1 })
 
@@ -19,7 +22,11 @@ describe('Api', () => {
   })
   test('error', async () => {
     const fn = jest.fn()
-    const user = new Api<User, unknown, UserData>('https://reqres.in/api/users/{user}')
+    const user = new Api<User, unknown, UserData>('https://reqres.in/api/users/{user}', {
+      headers: {
+        'x-api-key': 'reqres-free-v1',
+      },
+    })
 
     const user1 = user.get({ user: 123 })
 
@@ -33,7 +40,11 @@ describe('Api', () => {
   })
   test('error FetchApi', async () => {
     const fn = jest.fn()
-    const user = new FetchApi<User>('https://reqres.in/api/users/123')
+    const user = new FetchApi<User>('https://reqres.in/api/users/123', {
+      headers: {
+        'x-api-key': 'reqres-free-v1',
+      },
+    })
 
     try {
       await user

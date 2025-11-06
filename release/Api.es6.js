@@ -9,18 +9,22 @@ class FetchApi extends Fetch {
         this.url = url;
         this.options = options;
         _FetchApi_resolveBC.set(this, void 0);
-        const bc = new BroadcastChannel(`@watch-state/api:resolveBC:${url}`);
-        __classPrivateFieldSet(this, _FetchApi_resolveBC, bc, "f");
-        bc.addEventListener('message', (event) => {
-            super.resolve(event.data);
-        });
+        if (typeof BroadcastChannel !== 'undefined') {
+            const bc = new BroadcastChannel(`@watch-state/api:resolveBC:${url}`);
+            __classPrivateFieldSet(this, _FetchApi_resolveBC, bc, "f");
+            bc.addEventListener('message', (event) => {
+                super.resolve(event.data);
+            });
+        }
     }
     resolve(value) {
+        var _a;
         super.resolve(value);
-        __classPrivateFieldGet(this, _FetchApi_resolveBC, "f").postMessage(value);
+        (_a = __classPrivateFieldGet(this, _FetchApi_resolveBC, "f")) === null || _a === void 0 ? void 0 : _a.postMessage(value);
     }
     destroy() {
-        __classPrivateFieldGet(this, _FetchApi_resolveBC, "f").close();
+        var _a;
+        (_a = __classPrivateFieldGet(this, _FetchApi_resolveBC, "f")) === null || _a === void 0 ? void 0 : _a.close();
     }
 }
 _FetchApi_resolveBC = new WeakMap();

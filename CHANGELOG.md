@@ -1,9 +1,14 @@
 # Changelog
 
+## v2.0
+
+### v2.0.0 [![06.11.2025](https://img.shields.io/date/1762457013)](https://github.com/d8corp/watch-state-ajax/tree/v2.0.0)
+  - new version
+
 ## v1.2
 
 ### v1.2.0 [![06.09.2022](https://img.shields.io/date/1662461918)](https://github.com/d8corp/watch-state-ajax/tree/v1.2.0)
-- added cache invalidation
+  - added cache invalidation
   - added `update` method
   - added `getKeys` option
 

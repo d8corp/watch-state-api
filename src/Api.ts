@@ -13,23 +13,26 @@ export class FetchApi <
   Err = Error,
   Data extends ApiData = ApiData
 > extends Fetch<Value, Err> {
-  #resolveBC: BroadcastChannel
+  #resolveBC?: BroadcastChannel
   constructor (public url: string, public options: ApiOptions<Value, Err, Data> = {}) {
     super(url, options)
-    const bc = new BroadcastChannel(`@watch-state/api:resolveBC:${url}`)
-    this.#resolveBC = bc
-    bc.addEventListener('message', (event) => {
-      super.resolve(event.data)
-    })
+
+    if (typeof BroadcastChannel !== 'undefined') {
+      const bc = new BroadcastChannel(`@watch-state/api:resolveBC:${url}`)
+      this.#resolveBC = bc
+      bc.addEventListener('message', (event) => {
+        super.resolve(event.data)
+      })
+    }
   }
 
   protected resolve (value: Value) {
     super.resolve(value)
-    this.#resolveBC.postMessage(value)
+    this.#resolveBC?.postMessage(value)
   }
 
   destroy () {
-    this.#resolveBC.close()
+    this.#resolveBC?.close()
   }
 }
 
